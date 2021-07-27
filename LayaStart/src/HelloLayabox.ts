@@ -1,35 +1,100 @@
 module laya {
     import Stage = Laya.Stage;
     import Text = Laya.Text;
+    import Input = Laya.TextInput;
+    import Event = Laya.Event;
     import Browser = Laya.Browser;
     import WebGL = Laya.WebGL;
     export class HelloLayabox {
+        private txt: Text;
+        private prevX: number = 0;
+        private prevY: number = 0;
         constructor() {
             // 不支持WebGL时自动切换至Canvas
             Laya.init(Browser.clientWidth, Browser.clientHeight, WebGL);
             Laya.stage.alignV = Stage.ALIGN_MIDDLE;
             Laya.stage.alignH = Stage.ALIGN_CENTER;
-            Laya.stage.scaleMode = "showall";
+            Laya.stage.scaleMode = Stage.SCALE_SHOWALL;
             Laya.stage.bgColor = "#232628";
-            var txt:Laya.Text = new Laya.Text();
-            //设置文本内容
-            txt.text = "hello_world";
-            //设置文本颜色
-            txt.color = "#ffffff";
-            //设置文本字体
-            txt.font = "Ya Hei";
-            //设置字体大小
-            txt.fontSize = 32;
-            //设置文本取背景
-            txt.bgColor = "#c30c30";
-            //设置文本框的颜色
-            txt.borderColor = "#23cfcf";
-            //设置粗体、斜体
-            txt.bold = true;
-            //设置斜体
-            txt.italic = true;
-            Laya.stage.addChild(txt);            
+            this.createText();
+            this.createSingleInput();
+            this.createMultiInput();
         }
+        private createText(): void {
+            this.txt = new Text();
+            this.txt.overflow = Text.SCROLL;
+            this.txt.text =
+                "Layabox是HTML5引擎技术提供商与优秀的游戏发行商，面向AS/JS/TS开发者提供HTML5开发技术方案！\n" +
+                "Layabox是HTML5引擎技术提供商与优秀的游戏发行商，面向AS/JS/TS开发者提供HTML5开发技术方案！\n" +
+                "Layabox是HTML5引擎技术提供商与优秀的游戏发行商，面向AS/JS/TS开发者提供HTML5开发技术方案！\n" +
+                "Layabox是HTML5引擎技术提供商与优秀的游戏发行商，面向AS/JS/TS开发者提供HTML5开发技术方案！\n" +
+                "Layabox是HTML5引擎技术提供商与优秀的游戏发行商，面向AS/JS/TS开发者提供HTML5开发技术方案！\n" +
+                "Layabox是HTML5引擎技术提供商与优秀的游戏发行商，面向AS/JS/TS开发者提供HTML5开发技术方案！";
+            this.txt.size(200, 100);
+            this.txt.x = 0;
+            this.txt.y = 0;
+            this.txt.borderColor = "#FFFF00";
+            this.txt.fontSize = 20;
+            this.txt.color = "#ffffff";
+            Laya.stage.addChild(this.txt);
+            this.txt.on(Event.MOUSE_DOWN, this, this.startScrollText);
+        }
+        /* 开始滚动文本 */
+        private startScrollText(e: Event): void {
+            this.prevX = this.txt.mouseX;
+            this.prevY = this.txt.mouseY;
+            Laya.stage.on(Event.MOUSE_MOVE, this, this.scrollText);
+            Laya.stage.on(Event.MOUSE_UP, this, this.finishScrollText);
+        }
+        /* 停止滚动文本 */
+        private finishScrollText(e: Event): void {
+            Laya.stage.off(Event.MOUSE_MOVE, this, this.scrollText);
+            Laya.stage.off(Event.MOUSE_UP, this, this.finishScrollText);
+        }
+        /* 鼠标滚动文本 */
+        private scrollText(e: Event): void {
+            var nowX: number = this.txt.mouseX;
+            var nowY: number = this.txt.mouseY;
+            this.txt.scrollX += this.prevX - nowX;
+            this.txt.scrollY += this.prevY - nowY;
+            this.prevX = nowX;
+            this.prevY = nowY;
+        }
+
+        private createSingleInput(): void {
+            var inputText: Input = new Input();
+            inputText.size(350, 100);
+            inputText.x = Laya.stage.width - inputText.width >> 2;
+            inputText.y = (Laya.stage.height - inputText.height >> 1) - 100;
+            // 移动端输入提示符
+            inputText.prompt = "Type some word...";
+            // 设置字体样式
+            inputText.bold = true;
+            inputText.bgColor = "#666666";
+            inputText.color = "#ffffff";
+            inputText.fontSize = 20;
+            Laya.stage.addChild(inputText);
+        }
+        private createMultiInput(): void {
+            var inputText: Input = new Input();
+            inputText.size(350, 100);
+            inputText.x = Laya.stage.width - inputText.width >> 2;
+            inputText.y = (Laya.stage.height - inputText.height >> 1) + 100;
+
+            // 移动端输入提示符
+            inputText.prompt = "Type some word...";
+            // 多行输入
+            inputText.multiline = true;
+            inputText.wordWrap = false;
+
+            // 设置字体样式
+            inputText.padding = "2,2,2,2";
+            inputText.bgColor = "#666666";
+            inputText.color = "#ffffff";
+            inputText.fontSize = 20;
+            Laya.stage.addChild(inputText);
+        }
+
     }
 }
 new laya.HelloLayabox();

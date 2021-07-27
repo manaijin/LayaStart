@@ -1,44 +1,59 @@
 (function () {
     'use strict';
 
-    var laya;
-    (function (laya) {
-        var Sprite = Laya.Sprite;
-        var Stage = Laya.Stage;
-        var Handler = Laya.Handler;
-        var Browser = Laya.Browser;
-        var WebGL = Laya.WebGL;
-        class Sprite_SwitchTexture {
-            constructor() {
-                this.texture1 = "../../res/apes/monkey2.png";
-                this.texture2 = "../../res/apes/monkey3.png";
-                this.flag = false;
-                Laya.init(Browser.clientWidth, Browser.clientHeight, WebGL);
-                Laya.stage.alignV = Stage.ALIGN_MIDDLE;
-                Laya.stage.alignH = Stage.ALIGN_CENTER;
-                Laya.stage.scaleMode = "showall";
-                Laya.stage.bgColor = "#ffffff";
-                Laya.loader.load([this.texture1, this.texture2], Handler.create(this, this.onAssetsLoaded));
-            }
-            onAssetsLoaded() {
-                this.ape = new Sprite();
-                Laya.stage.addChild(this.ape);
-                this.ape.pivot(55, 72);
-                this.ape.pos(100, 50);
-                this.ape.size(100, 100);
-                this.switchTexture();
-                this.ape.on("click", this, this.switchTexture);
-            }
-            switchTexture() {
-                var textureUrl = (this.flag = !this.flag) ? this.texture1 : this.texture2;
-                var texture = Laya.loader.getRes(textureUrl);
-                this.ape.graphics.clear();
-                this.ape.graphics.drawTexture(texture, 0, 0, 100, 100);
-                this.ape.size(100, 100);
+    class TweenDemo {
+        constructor() {
+            Laya.init(1920, 1080, Laya.WebGL);
+            Laya.stage.bgColor = "#1b2436";
+            this.createTween();
+            console.log(this.toHexString(20));
+        }
+        createTween() {
+            var w = 800;
+            var offsetX = Laya.stage.width - w >> 2;
+            var demoString = "L";
+            var letterText;
+            var start_time = Laya.systemTimer.currTimer;
+            for (var i = 0, len = demoString.length; i < len; ++i) {
+                letterText = this.createLetter(demoString.charAt(i));
+                letterText.x = w / len * i + offsetX;
+                letterText.y = 300;
+                let delay = i * 1000;
+                Laya.Tween.from(letterText, { y: 100, update: new Laya.Handler(this, this.updateColor, [letterText, delay, start_time]) }, 3000, Laya.Ease.elasticOut, null, delay);
             }
         }
-        laya.Sprite_SwitchTexture = Sprite_SwitchTexture;
-    })(laya || (laya = {}));
-    new laya.Sprite_SwitchTexture();
+        createLetter(char) {
+            var letter = new Laya.Text();
+            letter.text = char;
+            letter.color = "#ffffff";
+            letter.font = "Impact";
+            letter.fontSize = 180;
+            Laya.stage.addChild(letter);
+            return letter;
+        }
+        updateColor(txt, delay, start_time) {
+        }
+        changeColor(txt) {
+            txt.color = "#ff0000";
+            txt.color;
+        }
+        toHexString(n) {
+            if (n < 0) {
+                n = 0xFFFFFFFF + n + 1;
+            }
+            return "0x" + ("00000000" + n.toString(16).toUpperCase()).substr(-8);
+        }
+        stringToHex(str) {
+            let val = "";
+            for (let i = 0; i < str.length; i++) {
+                if (val == "")
+                    val = str.charCodeAt(i).toString(16);
+                else
+                    val += "," + str.charCodeAt(i).toString(16);
+            }
+            return val;
+        }
+    }
+    new TweenDemo();
 
 }());

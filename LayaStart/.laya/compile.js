@@ -34,7 +34,7 @@ gulp.task("compile", prevTasks, function () {
     }
 
 	return rollup.rollup({
-		input: workSpaceDir + '/src/Sprite_DisplayImage.ts',
+		input: workSpaceDir + '/src/TweenDemo.ts',
 		onwarn:(waring,warn)=>{
 			if(waring.code == "CIRCULAR_DEPENDENCY"){
 				console.log("warnning Circular dependency:");
@@ -52,7 +52,7 @@ gulp.task("compile", prevTasks, function () {
 			glsl({
 				// By default, everything gets included
 				include: /.*(.glsl|.vs|.fs)$/,
-				sourceMap: false,
+				sourceMap: true,
 				compress:false
 			}),
 			/*terser({
