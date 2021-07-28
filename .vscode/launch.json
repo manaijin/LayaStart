@@ -12,6 +12,9 @@
             "file": "${workspaceFolder}/LayaStart/bin/index.html",
             "runtimeExecutable": "C:/Users/naijinma/AppData/Local/Google/Chrome/Application/chrome.exe",
             "sourceMaps": true,
+            "runtimeArgs": [
+                "--allow-file-access-from-files"
+            ],
         }
     ]
 }

@@ -1,59 +1,43 @@
 (function () {
     'use strict';
 
-    class TweenDemo {
+    class PoolTest {
         constructor() {
-            Laya.init(1920, 1080, Laya.WebGL);
-            Laya.stage.bgColor = "#1b2436";
-            this.createTween();
-            console.log(this.toHexString(20));
+            this.createTime = 0;
+            Laya.init(1136, 640, Laya.WebGL);
+            Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
+            Laya.stage.bgColor = "#232628";
+            Laya.timer.frameLoop(1, this, this.onFrame);
         }
-        createTween() {
-            var w = 800;
-            var offsetX = Laya.stage.width - w >> 2;
-            var demoString = "L";
-            var letterText;
-            var start_time = Laya.systemTimer.currTimer;
-            for (var i = 0, len = demoString.length; i < len; ++i) {
-                letterText = this.createLetter(demoString.charAt(i));
-                letterText.x = w / len * i + offsetX;
-                letterText.y = 300;
-                let delay = i * 1000;
-                Laya.Tween.from(letterText, { y: 100, update: new Laya.Handler(this, this.updateColor, [letterText, delay, start_time]) }, 3000, Laya.Ease.elasticOut, null, delay);
+        onFrame() {
+            if (this.createTime >= 100) {
+                for (var i = 0; i < 100; i++) {
+                    var img = Laya.Pool.getItemByClass("img", Laya.Image);
+                    img.anchorX = img.anchorY = 0.5;
+                    img.skin = "res/snow0.png";
+                    img.x = Math.random() * 1136;
+                    img.y = Math.random() * -150;
+                    img.scaleX = img.scaleY = 1;
+                    Laya.stage.addChild(img);
+                    this.createTime = 0;
+                }
             }
-        }
-        createLetter(char) {
-            var letter = new Laya.Text();
-            letter.text = char;
-            letter.color = "#ffffff";
-            letter.font = "Impact";
-            letter.fontSize = 180;
-            Laya.stage.addChild(letter);
-            return letter;
-        }
-        updateColor(txt, delay, start_time) {
-        }
-        changeColor(txt) {
-            txt.color = "#ff0000";
-            txt.color;
-        }
-        toHexString(n) {
-            if (n < 0) {
-                n = 0xFFFFFFFF + n + 1;
+            else {
+                this.createTime++;
             }
-            return "0x" + ("00000000" + n.toString(16).toUpperCase()).substr(-8);
-        }
-        stringToHex(str) {
-            let val = "";
-            for (let i = 0; i < str.length; i++) {
-                if (val == "")
-                    val = str.charCodeAt(i).toString(16);
-                else
-                    val += "," + str.charCodeAt(i).toString(16);
+            for (var j = 0; j < Laya.stage.numChildren; j++) {
+                var img1 = Laya.stage.getChildAt(j);
+                img1.y++;
+                img1.scaleX -= 0.001;
+                img1.scaleY -= 0.001;
+                img1.rotation++;
+                if (img1.y > 640 + 20 || img1.scaleX <= 0) {
+                    Laya.stage.removeChild(img1);
+                    Laya.Pool.recover("img", img1);
+                }
             }
-            return val;
         }
     }
-    new TweenDemo();
+    new PoolTest();
 
 }());
