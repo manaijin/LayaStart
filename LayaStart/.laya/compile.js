@@ -34,7 +34,7 @@ gulp.task("compile", prevTasks, function () {
     }
 
 	return rollup.rollup({
-		input: workSpaceDir + '/src/TweenDemo.ts',
+		input: workSpaceDir + '/src/Main.ts',
 		onwarn:(waring,warn)=>{
 			if(waring.code == "CIRCULAR_DEPENDENCY"){
 				console.log("warnning Circular dependency:");
